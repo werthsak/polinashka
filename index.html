@@ -2,23 +2,30 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>MBTI Тест | Полная версия</title>
     <style>
+        /* ===== СБРОС И БАЗОВЫЕ СТИЛИ ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Убирает серый фон при тапе на iPhone */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body {
-            background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f9 100%);
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
         }
         
         .container {
@@ -32,6 +39,179 @@
             border: 1px solid rgba(255,255,255,0.5);
         }
         
+        /* ===== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ ===== */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                border-radius: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+            
+            .btn {
+                min-width: 160px;
+                padding: 14px 20px;
+                font-size: 1em;
+            }
+            
+            .options-row {
+                gap: 8px;
+            }
+            
+            .option-card {
+                padding: 12px 8px;
+                min-height: 70px;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+            }
+            
+            .option-card:active {
+                transform: scale(0.98);
+            }
+            
+            .option-code {
+                font-size: 1.2em;
+            }
+            
+            .option-desc {
+                font-size: 0.8em;
+            }
+            
+            .footer-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .result-type {
+                font-size: 3em;
+            }
+            
+            .result-card {
+                padding: 20px 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 12px 8px;
+            }
+            
+            .stat-type {
+                font-size: 1.4em;
+            }
+            
+            .stat-count {
+                font-size: 2em;
+            }
+        }
+        
+        /* ===== ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ ===== */
+        @media (max-width: 380px) {
+            .options-row {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .option-card {
+                min-height: 60px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .container {
+                padding: 12px;
+            }
+            
+            .traits {
+                gap: 10px;
+            }
+            
+            .trait {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* ===== СТАБИЛИЗАЦИЯ КНОПОК ===== */
+        .option-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            height: auto;
+            word-break: break-word;
+        }
+        
+        .option-card:active {
+            transform: scale(0.98);
+            background: #ebf8ff;
+        }
+        
+        .btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 20px -8px #4f46e5;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            min-width: 200px;
+            text-align: center;
+            box-sizing: border-box;
+            line-height: 1.2;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+            background: #4338ca;
+        }
+        
+        .footer-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* ===== ОСТАЛЬНЫЕ СТИЛИ (без изменений) ===== */
         h1 {
             font-size: 2.2em;
             color: #1a2639;
@@ -39,6 +219,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
         
         h1 span {
@@ -68,12 +249,13 @@
             border-radius: 10px;
             margin: 20px 0;
             overflow: hidden;
+            transform: translateZ(0);
         }
         
         .progress-fill {
             height: 100%;
             background: #4f46e5;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
             border-radius: 10px;
         }
         
@@ -111,26 +293,6 @@
             gap: 20px;
         }
         
-        .option-card {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .option-card:hover {
-            border-color: #4f46e5;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px -10px #4f46e5;
-        }
-        
-        .option-card.selected {
-            border-color: #4f46e5;
-            background: #eef2ff;
-        }
-        
         .option-code {
             font-size: 1.8em;
             font-weight: 800;
@@ -143,17 +305,9 @@
             line-height: 1.4;
         }
         
-        .btn {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 40px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 10px 20px -8px #4f46e5;
+        .option-card.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
         }
         
         .btn:hover {
@@ -165,6 +319,7 @@
         .btn:disabled {
             opacity: 0.5;
             pointer-events: none;
+            transform: none;
             box-shadow: none;
         }
         
@@ -193,7 +348,6 @@
             display: none !important;
         }
         
-        /* Результат */
         .result-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 30px;
@@ -201,6 +355,7 @@
             color: white;
             text-align: center;
             margin: 20px 0;
+            transform: translateZ(0);
         }
         
         .result-type {
@@ -208,6 +363,8 @@
             font-weight: 800;
             letter-spacing: 4px;
             text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            line-height: 1.2;
+            word-break: break-word;
         }
         
         .result-name {
@@ -240,7 +397,6 @@
             font-weight: 600;
         }
         
-        /* Статистика */
         .stats-header {
             display: flex;
             justify-content: space-between;
@@ -265,11 +421,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
             transition: transform 0.2s;
+            transform: translateZ(0);
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px -10px #4f46e5;
+        .stat-card:active {
+            transform: scale(0.98);
         }
         
         .stat-type {
@@ -340,14 +496,8 @@
             border-radius: 40px;
             margin: 10px 0;
             font-size: 1em;
-        }
-        
-        .footer-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-            flex-wrap: wrap;
+            -webkit-appearance: none;
+            appearance: none;
         }
         
         .badge {
@@ -366,6 +516,7 @@
     </style>
 </head>
 <body>
+    <!-- ВЕСЬ ОСТАЛЬНОЙ HTML КОД БЕЗ ИЗМЕНЕНИЙ -->
     <div class="container" id="app">
         <h1>
             🔮 Определитель типа личности
@@ -436,9 +587,10 @@
         </div>
     </div>
 
+    <!-- ВЕСЬ JAVASCRIPT КОД БЕЗ ИЗМЕНЕНИЙ -->
     <script>
         // ===== НАСТРОЙКИ =====
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymC42i9j04WalTbmoDJjBLu84TgUXoNeiSHwHwp7n-Mg8pooQcj1qZD_gF0Mc94-FGjA/exec'; // ВАША ССЫЛКА
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymC42i9j04WalTbmoDJjBLu84TgUXoNeiSHwHwp7n-Mg8pooQcj1qZD_gF0Mc94-FGjA/exec';
         const ADMIN_PASSWORD = '1234';
 
         // ===== ПОЛНОЕ ОПИСАНИЕ ТИПОВ MBTI =====
@@ -874,3 +1026,4 @@
     </script>
 </body>
 </html>
+
