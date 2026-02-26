@@ -1,293 +1,875 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>MBTI Тест</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI Тест | Полная версия</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f9 100%);
+            min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            max-width: 500px;
+        
+        .container {
+            max-width: 1000px;
             width: 100%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: white;
+            border-radius: 40px;
+            padding: 35px;
+            box-shadow: 0 30px 60px rgba(0, 20, 40, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
         }
+        
         h1 {
-            text-align: center;
-            color: #2d3748;
-            margin-top: 0;
-        }
-        .question {
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #f7fafc;
-            border-radius: 12px;
-        }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #2d3748;
-        }
-        .options {
+            font-size: 2.2em;
+            color: #1a2639;
+            margin-bottom: 10px;
             display: flex;
+            align-items: center;
             gap: 10px;
         }
-        .option {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
+        
+        h1 span {
+            background: #3a4f6e;
+            color: white;
+            font-size: 0.5em;
+            padding: 6px 15px;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        h3 {
+            color: #34495e;
+            margin: 20px 0 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e7ff;
             border-radius: 10px;
-            text-align: center;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4f46e5;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+        
+        .questions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .question-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .question-card.active {
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 10px 25px -10px #4f46e5;
+        }
+        
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+        
+        .options-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .option-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            background: white;
         }
-        .option.selected {
-            border-color: #4299e1;
-            background: #ebf8ff;
+        
+        .option-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px #4f46e5;
         }
+        
+        .option-card.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .option-code {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+        
+        .option-desc {
+            color: #475569;
+            line-height: 1.4;
+        }
+        
         .btn {
-            background: #4299e1;
+            background: #4f46e5;
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            margin: 5px 0;
+            transition: all 0.2s;
+            box-shadow: 0 10px 20px -8px #4f46e5;
         }
+        
+        .btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -10px #4f46e5;
+        }
+        
         .btn:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
+            pointer-events: none;
+            box-shadow: none;
         }
+        
         .btn.secondary {
-            background: #718096;
+            background: #64748b;
+            box-shadow: 0 10px 20px -8px #64748b;
         }
+        
+        .btn.secondary:hover {
+            background: #475569;
+        }
+        
+        .btn.outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+            box-shadow: none;
+        }
+        
+        .btn.outline:hover {
+            background: #eef2ff;
+            transform: translateY(-2px);
+        }
+        
         .hidden {
-            display: none;
+            display: none !important;
         }
-        .result {
+        
+        /* Результат */
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 40px;
+            color: white;
             text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            color: #4299e1;
             margin: 20px 0;
         }
+        
+        .result-type {
+            font-size: 5em;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .result-name {
+            font-size: 1.8em;
+            margin: 10px 0 20px;
+            opacity: 0.9;
+        }
+        
+        .result-desc {
+            font-size: 1.1em;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .traits {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .trait {
+            background: rgba(255,255,255,0.15);
+            padding: 12px 25px;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+            font-weight: 600;
+        }
+        
+        /* Статистика */
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
             margin: 20px 0;
         }
-        .stat-item {
-            background: #4299e1;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 15px;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
         }
-        .stat-item .type {
-            font-size: 20px;
-            font-weight: bold;
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -10px #4f46e5;
         }
-        .stat-item .count {
-            font-size: 28px;
+        
+        .stat-type {
+            font-size: 1.8em;
             font-weight: 800;
+            color: #4f46e5;
         }
-        input {
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            width: 100%;
-            margin: 10px 0;
-            box-sizing: border-box;
+        
+        .stat-count {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.2;
         }
-        .error {
-            color: #e53e3e;
+        
+        .stat-percent {
+            color: #64748b;
+            font-size: 0.9em;
+        }
+        
+        .chart-container {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .chart-bar-item {
+            margin-bottom: 15px;
+        }
+        
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .chart-bar-bg {
+            background: #e2e8f0;
+            height: 36px;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        
+        .chart-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8);
+            color: white;
+            line-height: 36px;
+            padding-left: 15px;
+            font-weight: 600;
+            border-radius: 18px;
+            transition: width 0.5s;
+        }
+        
+        .login-form {
+            max-width: 300px;
+            margin: 30px auto;
             text-align: center;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            margin: 10px 0;
+            font-size: 1em;
+        }
+        
+        .footer-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: #e2e8f0;
+            color: #1e293b;
+            padding: 5px 15px;
+            border-radius: 40px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .total-stat {
+            font-size: 1.3em;
+            color: #1e293b;
         }
     </style>
 </head>
 <body>
-    <div class="card" id="app">
-        <h1>🧠 Тип личности</h1>
+    <div class="container" id="app">
+        <h1>
+            🔮 Определитель типа личности
+            <span>MBTI</span>
+        </h1>
         
-        <!-- Экран 1: Тест -->
+        <!-- Экран теста -->
         <div id="testScreen">
-            <div id="questions"></div>
-            <button class="btn" id="submitBtn" disabled>Узнать результат</button>
-            <button class="btn secondary" id="adminBtn">📊 Админ</button>
-        </div>
-
-        <!-- Экран 2: Результат -->
-        <div id="resultScreen" class="hidden">
-            <div class="result" id="resultType"></div>
-            <button class="btn" id="againBtn">Пройти заново</button>
-            <button class="btn secondary" id="adminFromResult">📊 Админ</button>
-        </div>
-
-        <!-- Экран 3: Админ -->
-        <div id="adminScreen" class="hidden">
-            <h2>Вход</h2>
-            <input type="password" id="password" placeholder="Пароль">
-            <button class="btn" id="loginBtn">Войти</button>
-            <div id="adminStats" class="hidden">
-                <h2>Статистика</h2>
-                <div id="stats" class="stats-grid"></div>
-                <button class="btn secondary" id="backBtn">Назад</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
-            <div id="adminError" class="error hidden">Неверный пароль</div>
+            
+            <div id="questionsContainer" class="questions-grid"></div>
+            
+            <div class="footer-buttons">
+                <button class="btn" id="submitBtn" disabled>✨ Узнать результат</button>
+                <button class="btn secondary" id="adminBtn">📊 Панель администратора</button>
+            </div>
+        </div>
+        
+        <!-- Экран результата -->
+        <div id="resultScreen" class="hidden">
+            <div class="result-card">
+                <div class="result-type" id="resultType">INFJ</div>
+                <div class="result-name" id="resultName">Активист</div>
+                <div class="result-desc" id="resultDesc">Загрузка...</div>
+                
+                <div class="traits" id="resultTraits"></div>
+            </div>
+            
+            <div class="footer-buttons">
+                <button class="btn" id="restartBtn">🔄 Пройти заново</button>
+                <button class="btn outline" id="resultAdminBtn">📊 Статистика</button>
+            </div>
+        </div>
+        
+        <!-- Экран администратора -->
+        <div id="adminScreen" class="hidden">
+            <div class="stats-header">
+                <h2>📊 Общая статистика</h2>
+                <button class="btn secondary" id="backFromAdminBtn">← Назад</button>
+            </div>
+            
+            <!-- Вход -->
+            <div id="adminLogin" class="login-form">
+                <h3>Вход для администратора</h3>
+                <input type="password" id="adminPassword" placeholder="Пароль">
+                <button class="btn" id="loginBtn">Войти</button>
+                <div id="loginError" class="hidden" style="color: #e53e3e; margin-top: 10px;">Неверный пароль</div>
+            </div>
+            
+            <!-- Статистика (после входа) -->
+            <div id="adminStats" class="hidden">
+                <div class="total-stat" style="margin-bottom: 20px;">
+                    Всего прохождений: <strong id="totalCount">0</strong>
+                    <span class="badge" style="margin-left: 15px;">за всё время</span>
+                </div>
+                
+                <div class="stats-grid" id="statsCards"></div>
+                
+                <div class="chart-container">
+                    <h3>📈 Распределение типов</h3>
+                    <div id="statsChart"></div>
+                </div>
+                
+                <button class="btn secondary" id="resetStatsBtn" style="background: #dc2626;">🗑️ Сбросить статистику</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ⚠️ ВСТАВЬТЕ СВОЮ ССЫЛКУ
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-tkIbf9XbC2QgLwC_zpIhI4fRgO0tC7Qmg5z1pAncqBz8Wsxx5c_6Ih7irInW_Wa-6Q/exec';
+        // ===== НАСТРОЙКИ =====
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymC42i9j04WalTbmoDJjBLu84TgUXoNeiSHwHwp7n-Mg8pooQcj1qZD_gF0Mc94-FGjA/exec'; // ВАША ССЫЛКА
         const ADMIN_PASSWORD = '123';
 
-        // Вопросы
+        // ===== ПОЛНОЕ ОПИСАНИЕ ТИПОВ MBTI =====
+        const typeProfiles = {
+            "ISTJ": {
+                name: "Логист",
+                desc: "Практичный, фактологичный, надежный. Ценит порядок, традиции и стабильность. Отличный организатор, всегда доводит дела до конца.",
+                traits: ["Ответственный", "Организованный", "Надежный", "Традиционный"]
+            },
+            "ISFJ": {
+                name: "Защитник",
+                desc: "Заботливый, внимательный к деталям, преданный. Всегда готов помочь и защитить близких. Ценит гармонию и стабильность.",
+                traits: ["Преданный", "Внимательный", "Заботливый", "Практичный"]
+            },
+            "INFJ": {
+                name: "Активист",
+                desc: "Идеалистичный, проницательный, принципиальный. Стремится помогать другим и делать мир лучше. Обладает глубокой интуицией.",
+                traits: ["Идеалистичный", "Проницательный", "Креативный", "Эмпатичный"]
+            },
+            "INTJ": {
+                name: "Стратег",
+                desc: "Аналитичный, стратегический, независимый. Любит сложные задачи и постоянно совершенствует системы. Видит возможности там, где другие не замечают.",
+                traits: ["Стратегический", "Аналитичный", "Независимый", "Решительный"]
+            },
+            "ISTP": {
+                name: "Виртуоз",
+                desc: "Смелый, практичный, мастер на все руки. Лучше всего учится через опыт. Спокойный и собранный в кризисных ситуациях.",
+                traits: ["Адаптивный", "Рациональный", "Практичный", "Независимый"]
+            },
+            "ISFP": {
+                name: "Художник",
+                desc: "Чувствительный, добрый, ценит эстетику. Живет настоящим моментом. Заботится о близких и создает красоту вокруг себя.",
+                traits: ["Чувствительный", "Творческий", "Добрый", "Гибкий"]
+            },
+            "INFP": {
+                name: "Посредник",
+                desc: "Идеалистичный, ищет смысл и глубину. Креативный, преданный своим ценностям. Помогает другим найти свой путь.",
+                traits: ["Идеалистичный", "Эмпатичный", "Креативный", "Целеустремленный"]
+            },
+            "INTP": {
+                name: "Мыслитель",
+                desc: "Любознательный, логичный, изобретательный. Любит теории и абстрактные концепции. Постоянно ищет закономерности и объяснения.",
+                traits: ["Логичный", "Креативный", "Объективный", "Независимый"]
+            },
+            "ESTP": {
+                name: "Делец",
+                desc: "Энергичный, рисковый, ориентирован на действие. Быстро принимает решения и адаптируется к изменениям. Душа компании.",
+                traits: ["Энергичный", "Общительный", "Прагматичный", "Спонтанный"]
+            },
+            "ESFP": {
+                name: "Развлекатель",
+                desc: "Спонтанный, жизнерадостный, артистичный. Любит быть в центре внимания и дарить радость другим. Заряжает оптимизмом.",
+                traits: ["Общительный", "Оптимистичный", "Творческий", "Дружелюбный"]
+            },
+            "ENFP": {
+                name: "Борец",
+                desc: "Энтузиаст, креативный, ищет вдохновение. Видит возможности в людях и ситуациях. Умеет заряжать других своей энергией.",
+                traits: ["Энтузиаст", "Креативный", "Общительный", "Вдохновляющий"]
+            },
+            "ENTP": {
+                name: "Изобретатель",
+                desc: "Быстрый, изобретательный, любит спорить. Генерирует новые идеи и видит нестандартные решения. Вечный новатор.",
+                traits: ["Изобретательный", "Аналитичный", "Харизматичный", "Независимый"]
+            },
+            "ESTJ": {
+                name: "Руководитель",
+                desc: "Организованный, решительный, требовательный. Прирожденный лидер, который наводит порядок и добивается результатов.",
+                traits: ["Лидерский", "Организованный", "Решительный", "Практичный"]
+            },
+            "ESFJ": {
+                name: "Консул",
+                desc: "Общительный, заботливый, любит помогать. Ценит традиции и гармонию в коллективе. Душа любой команды.",
+                traits: ["Заботливый", "Общительный", "Надежный", "Гармоничный"]
+            },
+            "ENFJ": {
+                name: "Наставник",
+                desc: "Харизматичный, вдохновляющий, заботится о других. Прирожденный педагог и мотиватор. Помогает раскрыть потенциал.",
+                traits: ["Вдохновляющий", "Эмпатичный", "Харизматичный", "Организованный"]
+            },
+            "ENTJ": {
+                name: "Командир",
+                desc: "Амбициозный, стратегический, эффективный. Прирожденный лидер, который видит цель и ведет к ней команду.",
+                traits: ["Лидерский", "Стратегический", "Решительный", "Уверенный"]
+            }
+        };
+
+        // ===== ВОПРОСЫ MBTI (20 штук) =====
         const questions = [
-            { text: "После работы вы:", left: "E", right: "I" },
-            { text: "В решениях вы:", left: "T", right: "F" },
-            { text: "В планировании:", left: "J", right: "P" },
-            { text: "Восприятие мира:", left: "S", right: "N" },
-            { text: "В компании вы:", left: "E", right: "I" },
-            { text: "Принимая решения:", left: "T", right: "F" },
-            { text: "Ваш стиль:", left: "J", right: "P" },
-            { text: "Доверяете:", left: "S", right: "N" }
+            {
+                text: "1. После напряженной рабочей недели вы предпочитаете:",
+                left: { code: "E", desc: "Встретиться с друзьями, сходить на вечеринку, зарядиться энергией от общения" },
+                right: { code: "I", desc: "Побыть дома в тишине, почитать книгу, восстановить силы в одиночестве" }
+            },
+            {
+                text: "2. Что для вас важнее при планировании отпуска?",
+                left: { code: "J", desc: "Четкий план по дням, забронированные отели, расписанные экскурсии" },
+                right: { code: "P", desc: "Спонтанность, свобода выбора, возможность изменить планы в последний момент" }
+            },
+            {
+                text: "3. Принимая важное решение, вы больше доверяете:",
+                left: { code: "T", desc: "Логике, анализу фактов, объективным данным" },
+                right: { code: "F", desc: "Чувствам, интуиции, тому, как решение повлияет на людей" }
+            },
+            {
+                text: "4. В компании незнакомых людей вы обычно:",
+                left: { code: "E", desc: "Легко заводите разговор, знакомитесь, чувствуете прилив энергии" },
+                right: { code: "I", desc: "Держитесь в стороне, наблюдаете, чувствуете усталость от общения" }
+            },
+            {
+                text: "5. Что вам ближе в работе?",
+                left: { code: "S", desc: "Конкретные задачи, четкие инструкции, практический результат" },
+                right: { code: "N", desc: "Поиск новых идей, решение сложных проблем, творческий подход" }
+            },
+            {
+                text: "6. Как вы обычно готовитесь к важному событию?",
+                left: { code: "J", desc: "Заранее все планирую, готовлюсь постепенно, ничего не оставляю на последний момент" },
+                right: { code: "P", desc: "Начинаю готовиться в последний момент, но успеваю, люблю адреналин" }
+            },
+            {
+                text: "7. В споре для вас важнее:",
+                left: { code: "T", desc: "Найти истину, доказать свою правоту фактами" },
+                right: { code: "F", desc: "Сохранить хорошие отношения, не обидеть собеседника" }
+            },
+            {
+                text: "8. Когда вы читаете книгу или смотрите фильм, вам важнее:",
+                left: { code: "S", desc: "Сюжет, детали, реалистичность происходящего" },
+                right: { code: "N", desc: "Идеи, скрытые смыслы, символизм, глубинная философия" }
+            },
+            {
+                text: "9. Ваш рабочий стол обычно:",
+                left: { code: "J", desc: "Все разложено по полочкам, порядок, каждая вещь на своем месте" },
+                right: { code: "P", desc: "Творческий беспорядок, но я знаю, где что лежит" }
+            },
+            {
+                text: "10. Что вас больше вдохновляет?",
+                left: { code: "E", desc: "Общение с людьми, совместные проекты, командная работа" },
+                right: { code: "I", desc: "Уединение, размышления, возможность побыть наедине с собой" }
+            },
+            {
+                text: "11. В учебе вам легче:",
+                left: { code: "S", desc: "Запоминать факты, работать с конкретным материалом" },
+                right: { code: "N", desc: "Понимать общие концепции, видеть связи между темами" }
+            },
+            {
+                text: "12. Как вы относитесь к правилам и инструкциям?",
+                left: { code: "J", desc: "Соблюдаю, считаю их важными для порядка" },
+                right: { code: "P", desc: "Воспринимаю как рекомендации, могу нарушить если нужно" }
+            },
+            {
+                text: "13. Когда друг делится проблемой, вы чаще:",
+                left: { code: "T", desc: "Предлагаете решение, советуете, анализируете ситуацию" },
+                right: { code: "F", desc: "Сочувствуете, поддерживаете, просто слушаете" }
+            },
+            {
+                text: "14. Что для вас важнее в друзьях?",
+                left: { code: "E", desc: "Активность, общительность, готовность к приключениям" },
+                right: { code: "I", desc: "Глубина, надежность, способность понять с полуслова" }
+            },
+            {
+                text: "15. В работе вы предпочитаете:",
+                left: { code: "S", desc: "Стабильность, предсказуемость, понятные задачи" },
+                right: { code: "N", desc: "Разнообразие, новые проекты, возможность экспериментировать" }
+            },
+            {
+                text: "16. Ваш стиль жизни ближе к:",
+                left: { code: "J", desc: "Все запланировано, есть цели и сроки" },
+                right: { code: "P", desc: "Живу сегодняшним днем, планы могут меняться" }
+            },
+            {
+                text: "17. Критику вы воспринимаете как:",
+                left: { code: "T", desc: "Полезную обратную связь, возможность стать лучше" },
+                right: { code: "F", desc: "Болезненный удар, особенно если критика личная" }
+            },
+            {
+                text: "18. В свободное время вы скорее:",
+                left: { code: "E", desc: "Пойдете куда-то, встретитесь с людьми" },
+                right: { code: "I", desc: "Останетесь дома, займетесь своими делами" }
+            },
+            {
+                text: "19. Что вам интереснее обсуждать?",
+                left: { code: "S", desc: "Реальные события, практические вопросы" },
+                right: { code: "N", desc: "Теории, идеи, философские концепции" }
+            },
+            {
+                text: "20. Когда вы опаздываете, это обычно:",
+                left: { code: "J", desc: "Крайне редко, я всегда планирую время" },
+                right: { code: "P", desc: "Случается, потому что я отвлекся или задержался" }
+            }
         ];
 
-        let answers = new Array(8).fill(null);
-        let currentType = '';
+        // Состояние
+        let answers = new Array(questions.length).fill(null);
+        let currentUserType = null;
 
-        // Отрисовка вопросов
+        // DOM элементы
+        const testScreen = document.getElementById('testScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const adminScreen = document.getElementById('adminScreen');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressFill = document.getElementById('progressFill');
+        const adminBtn = document.getElementById('adminBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const resultAdminBtn = document.getElementById('resultAdminBtn');
+        const backFromAdminBtn = document.getElementById('backFromAdminBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const adminPassword = document.getElementById('adminPassword');
+        const loginError = document.getElementById('loginError');
+        const adminLogin = document.getElementById('adminLogin');
+        const adminStats = document.getElementById('adminStats');
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
+        const totalCountSpan = document.getElementById('totalCount');
+        const statsCards = document.getElementById('statsCards');
+        const statsChart = document.getElementById('statsChart');
+        const resultType = document.getElementById('resultType');
+        const resultName = document.getElementById('resultName');
+        const resultDesc = document.getElementById('resultDesc');
+        const resultTraits = document.getElementById('resultTraits');
+
+        // ===== ОТРИСОВКА ТЕСТА =====
         function renderQuestions() {
             let html = '';
-            questions.forEach((q, i) => {
-                html += `<div class="question">
-                    <div class="question-text">${q.text}</div>
-                    <div class="options">
-                        <div class="option ${answers[i] === 'left' ? 'selected' : ''}" onclick="select(${i}, 'left')">${q.left}</div>
-                        <div class="option ${answers[i] === 'right' ? 'selected' : ''}" onclick="select(${i}, 'right')">${q.right}</div>
+            let answeredCount = 0;
+            
+            questions.forEach((q, index) => {
+                const isAnswered = answers[index] !== null;
+                if (isAnswered) answeredCount++;
+                
+                html += `
+                    <div class="question-card ${answers[index] !== null ? 'active' : ''}">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-row">
+                            <div class="option-card ${answers[index] === 'left' ? 'selected' : ''}" 
+                                 onclick="selectAnswer(${index}, 'left')">
+                                <div class="option-code">${q.left.code}</div>
+                                <div class="option-desc">${q.left.desc}</div>
+                            </div>
+                            <div class="option-card ${answers[index] === 'right' ? 'selected' : ''}" 
+                                 onclick="selectAnswer(${index}, 'right')">
+                                <div class="option-code">${q.right.code}</div>
+                                <div class="option-desc">${q.right.desc}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>`;
+                `;
             });
-            document.getElementById('questions').innerHTML = html;
-            document.getElementById('submitBtn').disabled = answers.includes(null);
+            
+            questionsContainer.innerHTML = html;
+            
+            // Прогресс
+            const progress = (answeredCount / questions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            
+            // Кнопка
+            submitBtn.disabled = answeredCount < questions.length;
         }
 
-        window.select = (i, val) => {
-            answers[i] = val;
+        window.selectAnswer = function(index, side) {
+            answers[index] = side;
             renderQuestions();
         };
 
-        // Сохранение в Google
-        async function saveToGoogle(type) {
-            try {
-                await fetch(SCRIPT_URL + '?type=' + type);
-                console.log('Сохранено');
-            } catch (e) {
-                console.log('Ошибка сохранения');
-            }
-        }
-
-        // Загрузка статистики
-        async function loadStats() {
-            try {
-                let res = await fetch(SCRIPT_URL);
-                return await res.json();
-            } catch (e) {
-                return {};
-            }
-        }
-
-        // Расчет типа
+        // ===== РАСЧЕТ ТИПА =====
         function calculateType() {
-            let counts = {E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0};
-            answers.forEach((a, i) => {
-                if (a === 'left') counts[questions[i].left]++;
-                else counts[questions[i].right]++;
+            const counts = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+            
+            answers.forEach((side, index) => {
+                if (side === 'left') counts[questions[index].left.code]++;
+                else counts[questions[index].right.code]++;
             });
+
             return (counts.E > counts.I ? 'E' : 'I') +
                    (counts.S > counts.N ? 'S' : 'N') +
                    (counts.T > counts.F ? 'T' : 'F') +
                    (counts.J > counts.P ? 'J' : 'P');
         }
 
-        // Навигация
+        // ===== РАБОТА С GOOGLE SHEETS =====
+        async function saveToGoogle(type) {
+            try {
+                await fetch(SCRIPT_URL + '?type=' + type + '&_=' + Date.now());
+            } catch (e) {
+                console.log('Ошибка сохранения');
+            }
+        }
+
+        async function loadStats() {
+            try {
+                let response = await fetch(SCRIPT_URL + '?_=' + Date.now());
+                return await response.json();
+            } catch (e) {
+                return {};
+            }
+        }
+
+        // ===== СТАТИСТИКА =====
+        async function renderStats() {
+            const stats = await loadStats();
+            let total = 0;
+            
+            // Считаем общее количество
+            for (let type in stats) {
+                total += stats[type];
+            }
+            
+            totalCountSpan.textContent = total;
+
+            // Карточки
+            let cardsHtml = '';
+            let chartHtml = '';
+
+            // Все типы по порядку
+            const allTypes = [
+                "ISTJ", "ISFJ", "INFJ", "INTJ",
+                "ISTP", "ISFP", "INFP", "INTP",
+                "ESTP", "ESFP", "ENFP", "ENTP",
+                "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+            ];
+
+            allTypes.forEach(type => {
+                const count = stats[type] || 0;
+                const percent = total ? ((count / total) * 100).toFixed(1) : '0';
+                
+                cardsHtml += `
+                    <div class="stat-card">
+                        <div class="stat-type">${type}</div>
+                        <div class="stat-count">${count}</div>
+                        <div class="stat-percent">${percent}%</div>
+                    </div>
+                `;
+                
+                chartHtml += `
+                    <div class="chart-bar-item">
+                        <div class="chart-label">
+                            <span><strong>${type}</strong> ${typeProfiles[type]?.name || ''}</span>
+                            <span>${count} (${percent}%)</span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill" style="width: ${percent}%">${count}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            statsCards.innerHTML = cardsHtml;
+            statsChart.innerHTML = chartHtml || '<p>Пока нет данных</p>';
+        }
+
+        // ===== НАВИГАЦИЯ =====
         function showTest() {
-            document.getElementById('testScreen').style.display = 'block';
-            document.getElementById('resultScreen').style.display = 'none';
-            document.getElementById('adminScreen').style.display = 'none';
+            testScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+            adminScreen.classList.add('hidden');
         }
 
         function showResult() {
-            document.getElementById('testScreen').style.display = 'none';
-            document.getElementById('resultScreen').style.display = 'block';
-            document.getElementById('adminScreen').style.display = 'none';
+            testScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            adminScreen.classList.add('hidden');
         }
 
         function showAdmin() {
-            document.getElementById('testScreen').style.display = 'none';
-            document.getElementById('resultScreen').style.display = 'none';
-            document.getElementById('adminScreen').style.display = 'block';
-            document.getElementById('adminStats').style.display = 'none';
-            document.getElementById('password').value = '';
+            testScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            adminScreen.classList.remove('hidden');
+            adminLogin.classList.remove('hidden');
+            adminStats.classList.add('hidden');
+            adminPassword.value = '';
+            loginError.classList.add('hidden');
         }
 
-        // События
-        document.getElementById('submitBtn').onclick = async () => {
-            currentType = calculateType();
-            document.getElementById('resultType').innerText = currentType;
-            await saveToGoogle(currentType);
+        // ===== СОБЫТИЯ =====
+        submitBtn.addEventListener('click', async () => {
+            if (answers.includes(null)) return;
+            
+            const type = calculateType();
+            currentUserType = type;
+            
+            const profile = typeProfiles[type] || { name: '', desc: '', traits: [] };
+            
+            resultType.textContent = type;
+            resultName.textContent = profile.name;
+            resultDesc.textContent = profile.desc;
+            
+            // Черты характера
+            let traitsHtml = '';
+            profile.traits.forEach(trait => {
+                traitsHtml += `<span class="trait">${trait}</span>`;
+            });
+            resultTraits.innerHTML = traitsHtml;
+            
+            await saveToGoogle(type);
+            
             showResult();
-        };
+        });
 
-        document.getElementById('againBtn').onclick = () => {
-            answers = new Array(8).fill(null);
+        restartBtn.addEventListener('click', () => {
+            answers = new Array(questions.length).fill(null);
             renderQuestions();
             showTest();
-        };
+        });
 
-        document.getElementById('adminBtn').onclick = showAdmin;
-        document.getElementById('adminFromResult').onclick = showAdmin;
-
-        document.getElementById('backBtn').onclick = () => {
-            if (currentType) showResult();
-            else showTest();
-        };
-
-        document.getElementById('loginBtn').onclick = async () => {
-            if (document.getElementById('password').value === ADMIN_PASSWORD) {
-                let stats = await loadStats();
-                let html = '';
-                for (let type in stats) {
-                    html += `<div class="stat-item">
-                        <div class="type">${type}</div>
-                        <div class="count">${stats[type]}</div>
-                    </div>`;
-                }
-                document.getElementById('stats').innerHTML = html;
-                document.getElementById('adminStats').style.display = 'block';
-                document.getElementById('adminError').style.display = 'none';
+        adminBtn.addEventListener('click', showAdmin);
+        resultAdminBtn.addEventListener('click', showAdmin);
+        
+        backFromAdminBtn.addEventListener('click', () => {
+            if (currentUserType) {
+                showResult();
             } else {
-                document.getElementById('adminError').style.display = 'block';
+                showTest();
             }
-        };
+        });
 
+        loginBtn.addEventListener('click', async () => {
+            if (adminPassword.value === ADMIN_PASSWORD) {
+                adminLogin.classList.add('hidden');
+                adminStats.classList.remove('hidden');
+                await renderStats();
+                loginError.classList.add('hidden');
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        resetStatsBtn.addEventListener('click', async () => {
+            if (confirm('Удалить всю статистику? Это действие необратимо.')) {
+                alert('Функция очистки доступна через Google таблицу вручную');
+            }
+        });
+
+        // Инициализация
         renderQuestions();
     </script>
 </body>
